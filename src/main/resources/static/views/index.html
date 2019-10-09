@@ -61,7 +61,7 @@
 		$scope.receivedText = "";
 
 		setInterval(function () {
-			$http.get("http://localhost:8080/api/all").then(function (value) {
+			$http.get("api/all").then(function (value) {
 				$scope.receivedText = value.data;
 				console.log("ok", value);
 			}), function (err) {
