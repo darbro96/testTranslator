@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Tłumacz</title>
+    <link rel="stylesheet" type="text/css" href="style/main">
+	<link rel="stylesheet" type="text/css" href="style/style">
+	<script type="text/javascript" src="../js/lib/angular.min.js"></script>
+</head>
+<body ng-app="translator" ng-controller="controller">
+<div id="glowny">
+    <div id="jezyki">
+        <center>
+            <div class="flaga">ENGLISH
+            </div>
+            <div class="flaga">DEUTSCH
+            </div>
+            <div class="flaga">FRANCAIS
+            </div>
+            <div class="flaga">ESPANOL
+            </div>
+        </center>
+    </div>
+
+    <div id="komunikator">
+        <!--		DAREK-->
+        <div id="kontener">
+            <div class="{{r.messageType}}" data-ng-repeat="r in receivedText">
+                Odebrano <b> {{r.timeStamp}} </b><br>
+                Treść: <b>{{r.content}}</b>
+                <button ng-click="usun(r.id)">Usuń</button>
+            </div>
+            <input type="text" ng-model="tresc">
+            <button ng-click="odpowiedz()">Odpowiedz</button>
+            <!--    <ul>-->
+            <!--        <li data-ng-repeat="r in receivedText">-->
+            <!--        </li>-->
+            <!--    </ul>-->
+        </div>
+        <!--		DAREK-->
+    </div>
+
+    <div id="podpowiedzi">
+        <center>
+            <div class="podp">ENGLISH
+            </div>
+            <div class="podp">DEUTSCH
+            </div>
+            <div class="podp">FRANCAIS
+            </div>
+            <div class="podp">ESPANOL
+            </div>
+        </center>
+    </div>
+</div>
+<script type="text/javascript">
+	angular.module('translator', []).controller('controller', function ($scope, $http, $interval) {
+		$scope.receivedText = "";
+
+		setInterval(function () {
+			$http.get("http://localhost:8080/api/all").then(function (value) {
+				$scope.receivedText = value.data;
+				console.log("ok", value);
+			}), function (err) {
+				console.log("err", err);
+			};
+		}, 1000);
+
+		$scope.usun = function (id) {
+			$http.delete("http://localhost:8080/api/del/" + id).then(function (value) {
+				console.log("ok", value);
+			}), function (err) {
+				console.log("err", err);
+			};
+			location.reload();
+		};
+
+		$scope.usunAll = function () {
+			$http.delete("http://localhost:8080/api/del/all").then(function (value) {
+				console.log("ok", value);
+			}), function (err) {
+				console.log("err", err);
+			};
+			location.reload();
+		};
+
+		$scope.odpowiedz=function () {
+			$http.post("http://localhost:8080/api/send/type=REPLY/" + $scope.tresc.replace(" ","%20")).then(function (value) {
+				console.log("ok", value);
+			}), function (err) {
+				console.log("err", err);
+			};
+		};
+	});
+
+</script>
+</body>
+</html>

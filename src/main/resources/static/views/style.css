@@ -1,0 +1,20 @@
+#kontener{
+    width: 50%;
+}
+.MESSAGE{
+    border-style: dashed;
+    border-width: 1px;
+    background-color: dodgerblue;
+    text-align: left;
+    color: white;
+    border-radius: 9px;
+    padding: 3px;
+}
+.REPLY{
+    border-style: dashed;
+    border-width: 1px;
+    text-align: right;
+    color: dodgerblue;
+    border-radius: 9px;
+    padding: 3px;
+}

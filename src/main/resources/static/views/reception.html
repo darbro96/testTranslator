@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="../js/lib/angular.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="style/style">
+</head>
+<body ng-app="translator" ng-controller="controller">
+<button ng-click="usunAll()">Usuń wszystkie</button>
+<div id="kontener">
+    <div class="{{r.messageType}}" data-ng-repeat="r in receivedText">
+        Odebrano <b> {{r.timeStamp}} </b><br>
+        Treść: <b>{{r.content}}</b>
+        <button ng-click="usun(r.id)">Usuń</button>
+    </div>
+    <input type="text" ng-model="tresc">
+    <button ng-click="odpowiedz()">Odpowiedz</button>
+    <!--    <ul>-->
+    <!--        <li data-ng-repeat="r in receivedText">-->
+    <!--        </li>-->
+    <!--    </ul>-->
+</div>
+<script type="text/javascript">
+    angular.module('translator', []).controller('controller', function ($scope, $http, $interval) {
+        $scope.receivedText = "";
+
+        setInterval(function () {
+            $http.get("http://localhost:8080/api/all").then(function (value) {
+                $scope.receivedText = value.data;
+                console.log("ok", value);
+            }), function (err) {
+                console.log("err", err);
+            };
+        }, 1000);
+
+        $scope.usun = function (id) {
+            $http.delete("http://localhost:8080/api/del/" + id).then(function (value) {
+                console.log("ok", value);
+            }), function (err) {
+                console.log("err", err);
+            };
+            location.reload();
+        };
+
+        $scope.usunAll = function () {
+            $http.delete("http://localhost:8080/api/del/all").then(function (value) {
+                console.log("ok", value);
+            }), function (err) {
+                console.log("err", err);
+            };
+            location.reload();
+        };
+
+        $scope.odpowiedz=function () {
+            $http.post("http://localhost:8080/api/send/type=REPLY/" + $scope.tresc.replace(" ","%20")).then(function (value) {
+                console.log("ok", value);
+            }), function (err) {
+                console.log("err", err);
+            };
+        };
+    });
+
+</script>
+</body>
+</html>
